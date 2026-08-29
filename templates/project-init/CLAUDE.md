@@ -12,9 +12,10 @@
 <!-- Pick one and delete the other. Governs how much ceremony each task carries. -->
 - **lite** — task backlog + tests-with-code + a one-commit-per-task discipline. For
   apps/scripts where the full audit trail is overkill.
-- **full** — the above plus pre-committed gates, drift tests, a trial/decision ledger,
-  per-task post-task review, and session logs. For research or anything where
-  "did this actually work?" needs to survive scrutiny.
+- **full** — the above plus pre-committed gates (with a human veto window), the
+  backlog drift test, an append-only `DECISIONS.md` ledger, per-task post-task
+  review, and project-closeout tasks. For research or anything where "did this
+  actually work?" needs to survive scrutiny.
 
 ## Project status
 <!-- One short paragraph + a phase/status table. Keep this CURRENT and SHORT.
@@ -52,4 +53,6 @@ Names are disambiguated where two plugins collide (prefer the namespaced form).
 - For substantive diffs, run `/code-review` (or `ecc:<lang>-reviewer`) before commit.
 - Capture discovered follow-ups in `docs/PRIORITIES.yaml`; never drop them.
 - Don't modify pinned invariants (split logic, gate thresholds, schemas) without a
-  decision recorded in the backlog.
+  decision recorded in `DECISIONS.md` (full tier) or the backlog.
+- Keep this file's status section current: project/phase closeouts refresh it (and
+  any newcomer-facing doc); move finished-phase narratives to `docs/historical/`.

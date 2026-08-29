@@ -50,9 +50,12 @@ Do this:
      (b) one bootstrap task **"Run `/code-audit` to populate the backlog with verified
      findings."** If neither applies, leave the example with a clear "replace me".
    - **full tier only:** also create `docs/METHODOLOGY.md` (a short stub: list the
-     binding rules this project will hold itself to) and `tests/test_priorities.py`
-     (the backlog drift test: status in enum; depends_on/blocks resolve; ≤1
-     in_progress; done has completed_at). Wire it to the repo's test runner.
+     binding rules this project will hold itself to — keep it the checklist an agent
+     re-reads at post-task review, with detail delegated to specs), copy
+     `test_priorities.py` → `tests/` **verbatim** (the hardened backlog drift test;
+     needs `pyyaml` + `pytest` — wire into the repo's test runner, adapting only the
+     `PRIORITIES_PATH` if the repo's layout differs), and copy `DECISIONS.md` →
+     repo root (the append-only decision/measurement ledger).
 
 5. **Do not** copy the template README into the repo (it's meta-guidance for you).
 

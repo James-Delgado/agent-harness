@@ -7,12 +7,15 @@ task" workflow. Copy these into a new project and fill the `<placeholders>`:
     <repo>/docs/AGENT_OPERATION.md
     <repo>/docs/PRIORITIES.yaml
     <repo>/docs/METHODOLOGY.md    <- only for the "full" tier; write your binding rules
-    <repo>/tests/test_priorities.py  <- the backlog drift test (full tier)
+    <repo>/tests/test_priorities.py  <- copy verbatim from test_priorities.py (full tier)
+    <repo>/DECISIONS.md           <- copy from DECISIONS.md stub (full tier)
 
 ## Tiers
 - **lite**: CLAUDE.md + AGENT_OPERATION.md + PRIORITIES.yaml. Backlog + tests-with-code.
-- **full**: add METHODOLOGY.md, the drift test, a trial/decision ledger, post-task
-  reviews, and session logs. Use for research / long-lived / high-stakes repos.
+- **full**: add METHODOLOGY.md, the drift test, the append-only DECISIONS.md
+  decision/measurement ledger, post-task reviews, veto-windowed pre-committed
+  gates, and project-closeout tasks. Use for research / long-lived / high-stakes
+  repos.
 
 ## Recommended ecc footprint (lean — drop the niche verticals)
 The full ecc install loads ~230 skills incl. healthcare / networking / supply-chain

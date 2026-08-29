@@ -1,21 +1,63 @@
 # Living task backlog. The next action = lowest-`rank` task with `status: ready`.
 # Selection is by RANK among ready tasks; `depends_on` is the hard ordering
 # constraint, `rank` is the tiebreak. Keep file order roughly rank-sorted for humans.
+# Optional but recommended once the graph is non-trivial: an ASCII DAG of the
+# task graph here in the header, so humans can scan ordering without parsing YAML.
 version: 1
 last_updated: <YYYY-MM-DD>
 
 schema:
   task_status: [ready, blocked, in_progress, done, skipped]
   complexity: [small, medium, large]
+  # Optional per-task fields:
+  #   owner: <human>   — the task is executed by a HUMAN, never an agent (device
+  #                      work, deployments, account/credential actions). Agents
+  #                      prepare the code/harness for it, then stop.
+  #   autonomy: safe | network | judgment | heavy-compute
+  #                    — loop-curation tag. Autonomous loops pick only `safe`
+  #                      (or untagged) tasks; the rest wait for a live session.
 
 execution_model:
-  concurrency: single-threaded
+  concurrency: single-threaded  # serial from the top; parallelism is opt-in, never default
+
+  task_lifecycle: |
+    Done tasks STAY in this file (`status: done` + `completed_at`). Never delete
+    them: `depends_on` references must resolve for the file's lifetime, and this
+    file records current STATE while git history records the TIMELINE. Archive
+    only under real size pressure, never preemptively.
+
   pick_procedure: |
-    1. Read this file. 2. Find lowest-rank `ready` task. 3. Mark in_progress,
-    commit alone. 4. Do the work + tests. 5. Post-task review. 6. Mark done,
-    flip unblocked dependents to ready. 7. Commit deliverable + this file.
-  # A drift test (tests/test_priorities.py) should enforce: status in enum;
-  # depends_on/blocks resolve to real ids; <=1 in_progress; done has completed_at.
+    1. Read this file. 2. Find lowest-rank `ready` task. 3. Mark in_progress
+    (+ started_at UTC), commit that change alone. 4. Do the work + tests.
+    5. Post-task review. 6. Mark done (+ completed_at), flip unblocked
+    dependents to ready. 7. Commit deliverable + this file together.
+
+  append_protocol: |
+    Whoever discovers new work APPENDS it immediately — discovered work is
+    captured, not dropped. Unique `id` (ids are stable; ranks are mutable —
+    renumber neighbours freely); status ready/blocked per dependencies; `notes`
+    links the commit/file/test where the gap surfaced. If the new task belongs
+    to a project that has a `<PROJECT>-CLOSE` task, add its id to that CLOSE
+    task's depends_on — closeout must not certify unfinished scope.
+
+  decision_gate_protocol: |
+    Work gated on a HUMAN decision — a deferred spec, a GO/NO-GO call — gets a
+    `<ID>-DECISION` task with `status: blocked`, even when every depends_on is
+    done: the decision, not a task, is the real gate. Its `notes` state the
+    decision to be made, the GO action, and the NO-GO action (usually "mark
+    skipped"). It stays blocked so an autonomous loop can never auto-decide it.
+
+  spec_protocol: |
+    Just-in-time specs: phases/projects beyond the current one get only a
+    SPEC task + a terminal CLOSE/EXEC milestone. A phase's build tasks are
+    seeded by its SPEC task from the previous phase's results — never invented
+    earlier. Speculative task lists rot.
+
+  # Drift test (tests/test_priorities.py — ships with the harness template)
+  # enforces: statuses/complexity in enum; depends_on/blocks resolve; unique
+  # ids + ranks; <=1 in_progress; done has completed_at; timestamps parse and
+  # completed_at >= started_at; blocked tasks have an unmet dep OR an
+  # explanatory note (the decision-gate allowance).
 
 tasks:
   - id: EXAMPLE-1
