@@ -1,0 +1,32 @@
+# Living task backlog. The next action = lowest-`rank` task with `status: ready`.
+# Selection is by RANK among ready tasks; `depends_on` is the hard ordering
+# constraint, `rank` is the tiebreak. Keep file order roughly rank-sorted for humans.
+version: 1
+last_updated: <YYYY-MM-DD>
+
+schema:
+  task_status: [ready, blocked, in_progress, done, skipped]
+  complexity: [small, medium, large]
+
+execution_model:
+  concurrency: single-threaded
+  pick_procedure: |
+    1. Read this file. 2. Find lowest-rank `ready` task. 3. Mark in_progress,
+    commit alone. 4. Do the work + tests. 5. Post-task review. 6. Mark done,
+    flip unblocked dependents to ready. 7. Commit deliverable + this file.
+  # A drift test (tests/test_priorities.py) should enforce: status in enum;
+  # depends_on/blocks resolve to real ids; <=1 in_progress; done has completed_at.
+
+tasks:
+  - id: EXAMPLE-1
+    rank: 1
+    title: "Replace me — first real task"
+    status: ready
+    depends_on: []
+    blocks: []
+    deliverable:
+      file: path/to/thing
+      tests: tests/test_thing.py
+    est_complexity: small
+    notes: |
+      One example task. Delete once real tasks exist.
